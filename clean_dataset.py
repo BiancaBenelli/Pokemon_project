@@ -3,11 +3,9 @@ pd.options.mode.chained_assignment = None
 
 pokemon_df = pd.read_csv('pokemon.csv')
 
-### Clean up the dataset
 pokemon_df.drop(['Unnamed: 0','german_name', 'japanese_name'], axis=1, inplace=True)
 pokemon_df.drop(['egg_type_number', 'egg_type_1', 'egg_type_2', 'egg_cycles'], axis=1, inplace=True)
 
-### Dealing with null values
 pokemon_df = pokemon_df[pokemon_df['ability_1'].notna()]
 pokemon_df[['type_2', 'ability_2', 'ability_hidden']] = pokemon_df[['type_2', 'ability_2', 'ability_hidden']].fillna("None")
 
