@@ -6,9 +6,8 @@ pd.options.mode.chained_assignment = None
 def return_clean_dataset():
   pokemon_df = pd.read_csv('pokemon.csv')
 
-  pokemon_df.drop(['Unnamed: 0','german_name', 'japanese_name'], axis=1, inplace=True)
+  pokemon_df.drop(['Unnamed: 0','german_name', 'japanese_name', 'growth_rate'], axis=1, inplace=True)
   pokemon_df.drop(['egg_type_number', 'egg_type_1', 'egg_type_2', 'percentage_male', 'egg_cycles'], axis=1, inplace=True)
-  #pokemon_df['percentage_male'] = pokemon_df['percentage_male'].fillna("Genderless")
 
   pokemon_df = pokemon_df[pokemon_df['ability_1'].notna()]
   pokemon_df[['type_2', 'ability_2', 'ability_hidden']] = pokemon_df[['type_2', 'ability_2', 'ability_hidden']].fillna("None")
@@ -33,4 +32,3 @@ def return_clean_dataset():
 
 if __name__ == '__mai__':
     print(return_clean_dataset)
-
