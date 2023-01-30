@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report # To compute the accuracy of my model
 
 # Create a dynamic page
+st.set_page_config(layout="centered")
 st.header('Pokemon project')
 st.subheader('To be like Professor Oak!')
 st.write('Use the sidebar to choose what to visualize.')
@@ -53,12 +54,12 @@ if st.sidebar.checkbox("Plots"):
         ('How many Pokemon per generation', 'Pokemon statuses per generation', 'Type 1 frequency', 'Type 2 frequency',
         'Ability 1 frequency', 'Ability 2 frequency', 'Strongest Pokemon', 'Correlation', 'Pokedex number and generation',
         'Height and weight', '"Against" plots', '"Stats" plots'))
-    #if st.checkbox('How many Pokemon per generation?'):
     if plot == 'How many Pokemon per generation':
-        st.write('As the title says, this is a graph to show how many Pokemon each generation has')
+        st.write('As the title says, this is a graph to show how many Pokemon each generation has:')
         # [8, 2] is to chose the dimension of the 2 columns
         col_1, col_2 = st.columns([8, 2])
         pokemon_per_generation = pokemon_df['generation'].value_counts()
+        # In the first column I have the plot
         with col_1:
             fig = plt.figure(figsize = (10, 8))
             plt.title('How many Pokemon per generation?')
@@ -66,14 +67,16 @@ if st.sidebar.checkbox("Plots"):
             plt.xlabel('Number of Pokemon')
             plt.ylabel('Generation')
             st.write(fig)
+        # In the second column I have the value counts of the above plot
         with col_2:
             st.write(pokemon_per_generation)
 
     status_list = pokemon_df['status'].value_counts().index
     if plot == 'Pokemon statuses per generation':
-        st.write('I study how in each generation the statuses of Pokemon are distributed')
-        fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize = (20, 20), constrained_layout = True)
-        fig.suptitle('Pokemon statuses per generation', fontsize= 25, fontweight='bold')
+        st.write('A study of how in each generation the statuses of Pokemon are distributed among the eight generations')
+        st.write('"Status" means Normal, Mythical, Sub Legendary and Legendary Pokemon.')
+        fig, axs = plt.subplots(nrows = 4, ncols = 1, figsize = (40, 20), constrained_layout = True)
+        fig.suptitle('Pokemon statuses per generation', fontsize= 18, fontweight='bold')
         for i, ax in zip(range(len(status_list)), axs.flat):
             status_mask = pokemon_df[pokemon_df['status'] == status_list[i]]
             status_per_gen = status_mask['generation'].value_counts()
@@ -83,11 +86,14 @@ if st.sidebar.checkbox("Plots"):
             handles, labels = ax.get_legend_handles_labels()
             handles, labels = zip(*[ (handles[i], labels[i]) for i in sorted(range(len(handles)), key = lambda k: list(map(int, labels))[k])] )
             ax.legend(handles, labels, title = 'Generation:', bbox_to_anchor=(1, 1))
-            ax.set_title(status_list[i], fontsize = 20, fontweight='bold')
+            ax.set_title(status_list[i], fontsize = 15, fontweight='bold')
         st.write(fig)
+        st.write('It can be seen that in the seventh generation there are no Sub Legendary Pokemon.')
+        st.write('The Normal status is the one who is disrtibuted more evenly throught the generations (beside the eight).')
 
+        # I use a checkbox to show other plots
         if st.checkbox("Do you want to see other plots that could be used?"):
-            st.write("I chose to use a Donut chart because I think it shows clearly the wanted info, but I could have used a Barchart:")
+            st.write("A Donut chart shows clearly the wanted info, but also a Barchart could be efficient:")
             fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize = (20, 20), constrained_layout = True)
             for i, ax in zip(range(len(status_list)), axs.flat):
                 status_mask = pokemon_df[pokemon_df['status'] == status_list[i]]
@@ -96,45 +102,50 @@ if st.sidebar.checkbox("Plots"):
                 ax.tick_params(axis = 'both', labelsize = 15)
                 ax.set_title(status_list[i], fontsize = 20, fontweight='bold')
             st.write(fig)
+            st.write('The Barchart is not the best choice due to the fact that the values range too differently based on the status: if the same proportion was kept for all the subplots, only the Normal one would be readable. Nonetheless, by havng the proportions change for each subplots, the plot does not truly show the wanted info.')
 
-            st.write("Or I could have used a Heatmap:")
+            st.write("A Heatmap could otherwise be used:")
             special_mask = pokemon_df[pokemon_df['status'] != 'Normal']
             status_per_gen = special_mask.groupby(['generation', 'status']).size().unstack(fill_value = 0)
             fig= plt.figure(figsize = (10, 8))
             sb.heatmap(status_per_gen, annot= True, cmap="Blues", fmt="d")
+            plt.xlabel('Status', fontsize = 12)
+            plt.ylabel('Generation', fontsize = 12)
             st.write(fig)
-            st.write('I removed the Normal status since it spiked my results')
+            st.write('The Normal status was removed since it spiked the results (there are many more Pokemon than "special" ones, so by keeping them in the heatmap would have been clear besides for the Normal values.')
 
     if plot == 'Type 1 frequency':
+        st.write('This treemap shows how many times each Type 1 appears throught the dataframe:')
         type_1_frequency = pokemon_df['type_1'].value_counts()
         fig = plt.figure(figsize = (15, 10))
-        plt.title("Type 1 frequencies", fontdict = {'fontsize' : 20})
+        plt.title("Type 1 frequencies", fontsize= 18, fontweight='bold')
         squarify.plot(sizes = type_1_frequency.values, label = type_1_frequency.index, value = type_1_frequency.values,
-                alpha=0.9, color=sb.color_palette("Paired"), pad=1)
+                alpha = 0.9, color=sb.color_palette("Paired"), pad = 1)
         plt.axis('off')
         st.write(fig)
+        st.write('Water is the most frequent Type 1, followed by Normal and Grass Types.')
+        st.write('The least frequent are Flying and Fairy.')
 
         if st.checkbox("Do you want to see other plots that could be used?"):
-            st.write("Since I have many values of Type 1, a Pie chart would have been quite confusing (but still works):")
+            st.write("Since I have quite a few values of Type 1, a Pie chart would have been quite confusing (but it still works):")
             fig = plt.figure(figsize=(10, 8))
-            plt.title("Type 1 frequencies", fontdict = {'fontsize' : 20})
+            plt.title("Type 1 frequencies", fontsize= 18, fontweight='bold')
             plt.pie(type_1_frequency, labels=type_1_frequency.index, autopct='%.2f%%', startangle=90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' },  labeldistance=None)
-            plt.legend(bbox_to_anchor=(1.5, 1))
+            plt.legend(bbox_to_anchor = (1.5, 1))
             plt.tight_layout()
             st.write(fig)
 
     type_2_present_mask = pokemon_df[pokemon_df['type_2'] != 'None']
     type_list = type_2_present_mask['type_1'].value_counts().index
     if plot == 'Type 2 frequency':
-        st.write('I study the frequency of Type 2 in relation to which Type 1 the pokemon has.')
-
-        st.write("I use a pie chart to show which Pokemon have a Type 2 and which don't (I'm gonna work on the former in the ext plot).")
+        st.write('A study about the frequency of Type 2 in relation to which Type 1 the Pokemon has.')
+        st.write('A Pie chart shows which Pokemon have a Type 2 and which do not (the next plot applied to the formers).')
         type_df_len = [(len(pokemon_df.index) - len(type_2_present_mask.index)), len(type_2_present_mask.index)]
         name = ["Pokemon without a Type 2", "Pokemon with a Type 2"]
         colors = ['#B7C3F3', '#8EB897']
-        fig = plt.figure(figsize=(10, 8))
-        plt.title("How many Pokemon have a Type 2?", fontdict = {'fontsize' : 20})
-        plt.pie(type_df_len, labels = name, autopct='%.2f%%', startangle=90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' }, colors = colors)
+        fig = plt.figure(figsize = (12, 8))
+        plt.title("How many Pokemon have a Type 2?", fontsize= 18, fontweight='bold')
+        plt.pie(type_df_len, labels = name, autopct='%.2f%%', startangle = 90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' }, colors = colors)
         st.write(fig)
 
         st.write("Now I study the frequency of the Types 2 as I did for Type 1:")
@@ -147,16 +158,17 @@ if st.sidebar.checkbox("Plots"):
         st.write(fig)
         
         # DA SISTEAMRE
-        st.write("Now I study the frequency of the Types 2 as I did for Type 1:")
-        fig, axs = plt.subplots(nrows = 9, ncols = 2, figsize = (45, 45), constrained_layout = True)
+        st.write("Now a plot for the frequency of Types 2 as it was done for Type 1:")
+        fig, axs = plt.subplots(nrows = 18, ncols = 1, figsize = (15, 45), constrained_layout = True)
         for i, ax in zip(range(len(type_list)), axs.flat):
             type_1 = type_2_present_mask[type_2_present_mask['type_1'] == type_list[i]]
             type_2_frequency = type_1['type_2'].value_counts()
             ax.bar(type_2_frequency.index, type_2_frequency.values, label = type_list[i], color = sb.color_palette("Paired", len(type_2_frequency.index)))
+            ax.set_xlabel('Type 2', fontsize = 10)
             ax.set_ylim([0, 25])
             ax.set_xticks(range(15)) 
             ax.tick_params(axis = 'both', labelsize = 15)
-            ax.set_title(type_list[i] + " type 1", fontsize = 20, fontweight='bold')
+            ax.set_title(type_list[i] + " Type 1", fontsize = 20, fontweight='bold')
         st.write(fig)
 
         if st.checkbox("Do you want to see other plots that could be used?"):
