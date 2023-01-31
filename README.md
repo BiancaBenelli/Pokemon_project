@@ -2,9 +2,13 @@
 
 This is a project about Pokemons for my Programming course, made up of four files:
 
-| pokemon.csv          | Csv of the dataframe                       |   
-| clean_dataset.py     | Python file where the dataframe is cleaned |   
-| Pokemon.ipynb        | Jupyter Notebook for Visual Studio         |   
-| pokemon_streamlit.py | Streamlit of the project                   |   
+|                      |                                            |
+|----------------------|--------------------------------------------|
+| pokemon.csv          | Csv of the dataframe                       |
+| clean_dataset.py     | Python file where the dataframe is cleaned |
+| Pokemon.ipynb        | Jupyter Notebook for Visual Studio         |
+| pokemon_streamlit.py | Streamlit of the project                   |
+| Pokemon_Colab.ipynb  | Copy of the Colab file                     |
+
 
 
