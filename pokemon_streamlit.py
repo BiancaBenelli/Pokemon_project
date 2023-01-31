@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score
 
 # Create a dynamic page
-st.set_page_config(layout="centered")
+st.set_page_config(layout= 'centered')
 st.header('Pokemon project')
 st.subheader('To be like Professor Oak!')
 #st.write('Use the sidebar to choose what to visualize.')
@@ -22,9 +22,9 @@ pokemon_df = pd.read_csv('pokemon.csv')
 
 # I use a sidebar to keep the Eda part of the project separate from the plots and models
 # I split the EDA between before and after the cleaning
-st.sidebar.write("What do you want to see?")
-if st.sidebar.checkbox("EDA"):
-    st.title("EDA")
+st.sidebar.write('What do you want to see?')
+if st.sidebar.checkbox('EDA'):
+    st.title('EDA')
     st.markdown("""The dataframe analyzed in this project deals with Pokemon and its columns can be split into 4 big groups:
 ##### Pokedex Data:
     - pokedex_number: The entry number of the Pokemon in the National Pokedex
@@ -58,8 +58,8 @@ if st.sidebar.checkbox("EDA"):
 ##### Breeding:
     - egg_type_number: Number of groups where a Pokemon can hatch
     - egg_type_?: Names of the egg groups where a Pokemon can hatch
-    - percentage_male: The percentage of the species that are male.Blank if
-    the - - Pokemon is genderless
+    - percentage_male: The percentage of the species that are male. Blank if
+    the Pokemon is genderless
     - egg_cycles: The number of cycles (255-257 steps) required to hatch an
     egg of the Pokemon
 ##### Type defenses:
@@ -68,37 +68,37 @@ if st.sidebar.checkbox("EDA"):
 """
 )
     st.write('Choose to see the EDA of the dataframe before or after its cleaning:')
-    if st.checkbox("BEFORE CLEANING"):
-        st.write("Pokemon dataframe:")
+    if st.checkbox('BEFORE CLEANING'):
+        st.write('Pokemon dataframe:')
         st.write(pokemon_df)
-        st.write("Rows and columns:", pokemon_df.shape)
+        st.write('Rows and columns:', pokemon_df.shape)
         
-        st.write("Dataframe head and tail:")
+        st.write('Dataframe head and tail:')
         st.write(pokemon_df.head())
         st.write(pokemon_df.tail())
 
-        st.write("Some numerical informations:")
+        st.write('Some numerical informations:')
         st.write(pokemon_df.describe())
     
     # Now I work with the clean dataset -> no null values
     pokemon_df = cl.return_clean_dataset()
-    if st.checkbox("AFTER CLEANING"):
+    if st.checkbox('AFTER CLEANING'):
         st.write('How the dataframe was cleaned and why can be seen on the Google Colab file on GitHub')
-        st.write("Pokemon dataframe:")
+        st.write('Pokemon dataframe:')
         st.write(pokemon_df)
-        st.write("Rows and columns:", pokemon_df.shape)
+        st.write('Rows and columns:', pokemon_df.shape)
 
-        st.write("Pokemon head and tail:")
+        st.write('Pokemon head and tail:')
         st.write(pokemon_df.head())
         st.write(pokemon_df.tail())
 
-        st.write("Some numerical informations:")
+        st.write('Some numerical informations:')
         st.write(pokemon_df.describe())
 
 # Plots and models are made working on the clean dataframe
 pokemon_df = cl.return_clean_dataset()
-if st.sidebar.checkbox("Plots"):
-    st.title("PLOTS")
+if st.sidebar.checkbox('Plots'):
+    st.title('PLOTS')
     # I use a selectbox to create a drop-down menu to be able to chose which plot to see
     plot = st.selectbox('Which plot would you like to be see?',
         ('How many Pokemon per generation', 'Pokemon statuses per generation', 'Type 1 frequency', 'Type 2 frequency',
@@ -112,7 +112,7 @@ if st.sidebar.checkbox("Plots"):
         # In the first column I have the plot
         with col_1:
             fig = plt.figure(figsize = (10, 8))
-            plt.title('How many Pokemon per generation?')
+            plt.title('How many Pokemon per generation?', fontsize= 18, fontweight='bold')
             plt.barh(pokemon_per_generation.index, pokemon_per_generation.values, color=['firebrick', 'turquoise', 'gold', 'limegreen', 'darkorange', 'palevioletred', 'darkviolet', 'cornflowerblue'])
             plt.xlabel('Number of Pokemon')
             plt.ylabel('Generation')
@@ -126,9 +126,9 @@ if st.sidebar.checkbox("Plots"):
     if plot == 'Pokemon statuses per generation':
         st.write('A study of how in each generation the statuses of Pokemon are distributed among the eight generations')
         st.write('"Status" means Normal, Mythical, Sub Legendary and Legendary Pokemon.')
-        st.write('A Donut chart was utilized:')
+        st.markdown("""-A Donut chart was utilized:""")
         fig, axs = plt.subplots(nrows = 4, ncols = 1, figsize = (40, 20), constrained_layout = True)
-        fig.suptitle('Pokemon statuses per generation', fontsize= 18, fontweight='bold')
+        fig.suptitle('Pokemon statuses per generation', fontsize = 18, fontweight = 'bold')
         for i, ax in zip(range(len(status_list)), axs.flat):
             status_mask = pokemon_df[pokemon_df['status'] == status_list[i]]
             status_per_gen = status_mask['generation'].value_counts()
@@ -138,13 +138,13 @@ if st.sidebar.checkbox("Plots"):
             handles, labels = ax.get_legend_handles_labels()
             handles, labels = zip(*[ (handles[i], labels[i]) for i in sorted(range(len(handles)), key = lambda k: list(map(int, labels))[k])] )
             ax.legend(handles, labels, title = 'Generation:', bbox_to_anchor=(1, 1))
-            ax.set_title(status_list[i], fontsize = 15, fontweight='bold')
+            ax.set_title(status_list[i], fontsize = 14, fontweight='bold')
         st.write(fig)
         st.write('It can be seen that in the seventh generation there are no Sub Legendary Pokemon.')
         st.write('The Normal status is the one who is disrtibuted more evenly throught the generations (beside the eight).')
 
         # I use a checkbox to show other plots
-        if st.checkbox("Do you want to see other plots that could be used?"):
+        if st.checkbox('Do you want to see other plots that could be used?'):
             st.markdown("""- A Donut chart shows clearly the wanted info, but a Barchart could also be efficient:""")
             fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize = (20, 20), constrained_layout = True)
             for i, ax in zip(range(len(status_list)), axs.flat):
@@ -170,18 +170,18 @@ if st.sidebar.checkbox("Plots"):
         st.write('This Treemap shows how many times each Type 1 appears throught the dataframe:')
         type_1_frequency = pokemon_df['type_1'].value_counts()
         fig = plt.figure(figsize = (15, 10))
-        plt.title("Type 1 frequencies", fontsize= 18, fontweight='bold')
+        plt.title('Type 1 frequencies', fontsize = 18, fontweight = 'bold')
         squarify.plot(sizes = type_1_frequency.values, label = type_1_frequency.index, value = type_1_frequency.values,
-                alpha = 0.9, color=sb.color_palette("Paired"), pad = 1)
+                alpha = 0.9, color=sb.color_palette('Paired'), pad = 1)
         plt.axis('off')
         st.write(fig)
         st.write('Water is the most frequent Type 1, followed by Normal and Grass.')
         st.write('The least frequent are Flying and Fairy.')
 
-        if st.checkbox("Do you want to see other plots that could be used?"):
-            st.write("Since I have quite a few values of Type 1, a Pie chart would have been quite confusing (but it still works):")
+        if st.checkbox('Do you want to see other plots that could be used?'):
+            st.write('Since I have quite a few values of Type 1, a Pie chart would have been quite confusing (but it still works):')
             fig = plt.figure(figsize=(10, 8))
-            plt.title("Type 1 frequencies", fontsize= 18, fontweight='bold')
+            plt.title('Type 1 frequencies', fontsize = 18, fontweight = 'bold')
             plt.pie(type_1_frequency, labels=type_1_frequency.index, autopct='%.2f%%', startangle=90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' },  labeldistance=None)
             plt.legend(bbox_to_anchor = (1.5, 1))
             plt.tight_layout()
@@ -193,10 +193,10 @@ if st.sidebar.checkbox("Plots"):
         st.write('This is a study about the frequency of Type 2 in relation to which Type 1 the Pokemon has.')
         st.markdown("""- Firstly, a Pie chart shows which Pokemon have a Type 2 and which do not (the next plots are applied to the formers).""")
         type_df_len = [(len(pokemon_df.index) - len(type_2_present_mask.index)), len(type_2_present_mask.index)]
-        name = ["Pokemon without a Type 2", "Pokemon with a Type 2"]
+        name = ['Pokemon without a Type 2', 'Pokemon with a Type 2']
         colors = ['#B7C3F3', '#8EB897']
         fig = plt.figure(figsize = (12, 8))
-        plt.title("How many Pokemon have a Type 2?", fontsize= 18, fontweight='bold')
+        plt.title('How many Pokemon have a Type 2?', fontsize = 18, fontweight = 'bold')
         plt.pie(type_df_len, labels = name, autopct='%.2f%%', startangle = 90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' }, colors = colors)
         st.write(fig)
         st.write('It is almost an even split between Pokemon who have a Type 2 and those who do not.')
@@ -204,7 +204,7 @@ if st.sidebar.checkbox("Plots"):
         st.write("""- Now onto the frequency of the Types 2 wih a Treemap (as it was done for Type 1):""")
         type_2_frequency = type_2_present_mask['type_2'].value_counts()
         fig = plt.figure(figsize = (15, 10))
-        plt.title("Type 2 frequencies", fontdict = {'fontsize' : 20})
+        plt.title("Type 2 frequencies",  )
         squarify.plot(sizes = type_2_frequency.values, label = type_2_frequency.index, value = type_2_frequency.values,
                 alpha = 0.9, color=sb.color_palette("Paired"), pad=1)
         plt.axis('off')
@@ -229,16 +229,15 @@ if st.sidebar.checkbox("Plots"):
 
         if st.checkbox("Do you want to see other plots that could be used?"):
             st.write("For these alternative plots, only the Water Type 1 was studied to make it simpler.")
-            st.st.markdown("""-With a Pie chart:""")
+            st.markdown("""- With a Pie chart:""")
             water_type_1 = type_2_present_mask[type_2_present_mask['type_1'] == 'Water']
             type_1_water_frequency = water_type_1['type_2'].value_counts()
             fig = plt.figure(figsize=(10, 8))
-            plt.title("Type 2 frequencies for Water", fontdict = {'fontsize' : 20})
             plt.pie(type_1_water_frequency.values, labels = type_1_water_frequency.index, autopct='%.2f%%', startangle=90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' })
             plt.legend(bbox_to_anchor=(1.5, 1))
             st.write(fig)
 
-            st.st.markdown("""- With a Heatmap:""")
+            st.markdown("""- With a Heatmap:""")
             special_mask = pokemon_df[pokemon_df['type_2'] != 'None']
             status_per_gen = special_mask.groupby(['type_1', 'type_2']).size().unstack()
             fig = plt.figure(figsize = (10, 10))
@@ -254,7 +253,7 @@ if st.sidebar.checkbox("Plots"):
     if plot == 'Ability 1 frequency':
         st.markdown("""- The thought procees of the columns Type 1 and Type 2 is applied to Ability 1:""")
         fig = plt.figure(figsize = (15, 10))
-        plt.title("Ability 1 frequencies", fontdict = {'fontsize' : 20})
+        plt.title("Ability 1 frequencies", fontsize = 18, fontweight = 'bold')
         squarify.plot(sizes = abil_1_mask.values, label = abil_1_mask.index, value = abil_1_mask.values,
                 alpha=0.9, color=sb.color_palette("hsv", len(abil_1_mask.index)), pad=1)
         plt.axis('off')
@@ -285,7 +284,7 @@ if st.sidebar.checkbox("Plots"):
         name = ["Pokemon without an Ability 2", "Pokemon with an Ability 2"]
         colors = ['#B7C3F3', '#8EB897']
         fig = plt.figure(figsize = (12, 8))
-        plt.title("How many Pokemon have an Ability 2?", fontsize= 18, fontweight='bold')
+        plt.title("How many Pokemon have an Ability 2?", fontsize = 18, fontweight = 'bold')
         plt.pie(type_df_len, labels = name, autopct='%.2f%%', startangle = 90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' }, colors = colors)
         st.write(fig)
         st.write('It is almost an even split also between Pokemon who have an Ability 2 and those who do not.')
@@ -295,7 +294,7 @@ if st.sidebar.checkbox("Plots"):
         abil_2_frequency = abil_2_present_mask['ability_2'].value_counts()
         abil_2_mask = abil_2_frequency[abil_2_frequency.values >= 10]
         fig = plt.figure(figsize = (15, 10))
-        plt.title("Ability 2 frequencies", fontdict = {'fontsize' : 20})
+        plt.title("Ability 2 frequencies", fontsize = 18, fontweight = 'bold')
         squarify.plot(sizes = abil_2_mask.values, label = abil_2_mask.index, value = abil_2_mask.values,
                 alpha=0.9, color=sb.color_palette("Set1", len(abil_1_mask.index)), pad=1)
         plt.axis('off')
@@ -396,7 +395,7 @@ if st.sidebar.checkbox("Plots"):
         st.write('There are some strong correlation between certain columns.')
 
     if plot == 'Pokedex number and generation':
-        st.write('Thanks to the Heatmap for the correlation, it was shown that there is (an obvious) correlation between Pokedex number and correlation: it is shown with a Lmplot:')
+        st.write('Thanks to the Heatmap of the correlation, it was shown that there is (an obvious) correlation between Pokedex number and generation, here shown with a Lmplot:')
         sb.lmplot(x = 'pokedex_number', y = 'generation', data= pokemon_df, scatter_kws={'color': 'pink'}, fit_reg=False, legend = True, height=10, aspect=1).fig.set_size_inches(10, 10)
         plt.title('Pokedex number and generation')
         plt.xlabel("Pokedex number")
@@ -477,8 +476,7 @@ if st.sidebar.checkbox('Models'):
     
     x = pokemon_type.filter(regex='against')
     y = pokemon_type.type_1
-    test_size_type_1 = st.slider('Choose the test size: ', min_value = 0.1, max_value = 0.9, step = 0.1)
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = test_size_type_1 , random_state = 42)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.5 , random_state = 42)
     model = RandomForestClassifier(random_state= 42)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
@@ -487,7 +485,7 @@ if st.sidebar.checkbox('Models'):
     st.write('Classification report of the model: ')
     st.write(classification_report(y_test, y_pred, output_dict = True))
 
-    st.subheader('Prediction on Status')
+    st.subheader('Prediction on Status')    
     st.write('This model tries to preditc the Status of a Pokemon using a Random Forest.')
     pokemon_legendary = pokemon_df[['status', 'total_points']].copy()
     replace_dict = {
@@ -496,14 +494,16 @@ if st.sidebar.checkbox('Models'):
     'Legendary' : 1,
     'Mythical': 1}
     pokemon_legendary.status.replace(replace_dict, inplace = True)
-
+    st.write('The correlation between Status and Total points is', pokemon_legendary['status'].corr(pokemon_legendary['total_points']))
+    
     x = pokemon_df.total_points
     y = pokemon_legendary.status
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size= 0.5, random_state = 22)
+    test_size_status = st.slider('Choose the test size: ', min_value = 0.1, max_value = 0.9, step = 0.1)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size= test_size_status, random_state = 22)
     model = RandomForestClassifier(random_state= 42)
     model.fit(x_train.to_numpy().reshape(-1, 1), y_train)
     y_pred = model.predict(x_test.to_numpy().reshape(-1, 1))
-    st.write('The correlation between Status and Total points is', pokemon_legendary['status'].corr(pokemon_legendary['total_points']))
     st.write('Accuracy of the model: ', accuracy_score(y_pred, y_test))
     st.write("Precision of the model: ", precision_score(y_test, y_pred))
     st.write("Recall of the model:",  recall_score(y_test, y_pred))
+    st.write('It is possible there is some Overfitting')
