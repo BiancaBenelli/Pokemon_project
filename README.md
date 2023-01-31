@@ -2,6 +2,7 @@
 
 This is a project about Pokemons for my Programming course, made up of four files:
 
+|                      |                                            |
 |----------------------|--------------------------------------------|
 | pokemon.csv          | Csv of the dataframe                       |
 | clean_dataset.py     | Python file where the dataframe is cleaned |
