@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 import seaborn as sb
 import squarify
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report # To compute the accuracy of my model
+from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score
 
 # Create a dynamic page
 st.set_page_config(layout="centered")
@@ -383,13 +384,13 @@ if st.sidebar.checkbox("Plots"):
         st.write('Since the dataframe is made up of so many columns, it is plit it into 2: the columns with data about the strength againts others Pokemon and the rest.')
         st.markdown("""#### Against """)
         fig = plt.figure(figsize = (20, 20))
-        sb.heatmap(against_df.corr(), annot = True, cmap="Blues").set_title('Correlatiton of against types')
+        sb.heatmap(against_df.corr(), annot = True, cmap="Blues").set_title('Correlatiton of against types', fontsize= 18, fontweight='bold')
         st.write(fig)
         st.write('Most of the correlation are as expected, like against_fire and against_grass.')
 
         st.markdown("""#### Stats """)
         fig = plt.figure(figsize = (20, 20))
-        sb.heatmap(stats_df.corr(numeric_only = True), annot = True, cmap="Blues").set_title('Correlatiton of remaining stats')
+        sb.heatmap(stats_df.corr(numeric_only = True), annot = True, cmap="Blues").set_title('Correlatiton of remaining stats', fontsize= 18, fontweight='bold')
         st.write(fig)
         st.write('Since it is a Correlation, only the numeric columns are taken into conisderation.')
         st.write('There are some strong correlation between certain columns.')
@@ -466,6 +467,7 @@ if st.sidebar.checkbox("Plots"):
 if st.sidebar.checkbox('Models'):
     st.title("MODELS")
     st.subheader('Prediction on which Type 1')
+    st.write('This model tries to preditc the Type 1 of a Pokemon using a Random Forest.')
     pokemon_type = pokemon_df[['type_1','against_normal', 'against_fire', 'against_water', 'against_electric',
         'against_grass', 'against_ice', 'against_fight', 'against_poison',
         'against_ground', 'against_flying', 'against_psychic', 'against_bug',
@@ -475,17 +477,18 @@ if st.sidebar.checkbox('Models'):
     
     x = pokemon_type.filter(regex='against')
     y = pokemon_type.type_1
-
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size= 0.5, random_state = 42)
+    test_size_type_1 = st.slider('Choose the test size: ', min_value = 0.1, max_value = 0.9, step = 0.1)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = test_size_type_1 , random_state = 42)
     model = RandomForestClassifier(random_state= 42)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
 
     st.write('Accuracy of the model: ', accuracy_score(y_test, y_pred))
-    st.write('Classification report: ')
-    st.write(classification_report(y_test, y_pred))
+    st.write('Classification report of the model: ')
+    st.write(classification_report(y_test, y_pred, output_dict = True))
 
-    st.subheader('Prediction on status')
+    st.subheader('Prediction on Status')
+    st.write('This model tries to preditc the Status of a Pokemon using a Random Forest.')
     pokemon_legendary = pokemon_df[['status', 'total_points']].copy()
     replace_dict = {
     'Normal': 0,
@@ -496,9 +499,11 @@ if st.sidebar.checkbox('Models'):
 
     x = pokemon_df.total_points
     y = pokemon_legendary.status
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size= 0.2, random_state = 22)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size= 0.5, random_state = 22)
     model = RandomForestClassifier(random_state= 42)
     model.fit(x_train.to_numpy().reshape(-1, 1), y_train)
     y_pred = model.predict(x_test.to_numpy().reshape(-1, 1))
+    st.write('The correlation between Status and Total points is', pokemon_legendary['status'].corr(pokemon_legendary['total_points']))
     st.write('Accuracy of the model: ', accuracy_score(y_pred, y_test))
-    st.write('The correlation between status and total points is', pokemon_legendary['status'].corr(pokemon_legendary['total_points']) )
+    st.write("Precision of the model: ", precision_score(y_test, y_pred))
+    st.write("Recall of the model:",  recall_score(y_test, y_pred))
