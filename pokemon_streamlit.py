@@ -83,12 +83,12 @@ if st.sidebar.checkbox('EDA'):
     # Now I work with the clean dataset -> no null values
     pokemon_df = cl.return_clean_dataset()
     if st.checkbox('AFTER CLEANING'):
-        st.write('How the dataframe was cleaned and why can be seen on the Google Colab file on GitHub')
+        st.write('How the dataframe was cleaned and why can be seen on the Google Colab file on GitHub.')
         st.write('Pokemon dataframe:')
         st.write(pokemon_df)
         st.write('Rows and columns:', pokemon_df.shape)
 
-        st.write('Pokemon head and tail:')
+        st.write('Dataframe head and tail:')
         st.write(pokemon_df.head())
         st.write(pokemon_df.tail())
 
@@ -124,9 +124,9 @@ if st.sidebar.checkbox('Plots'):
 
     status_list = pokemon_df['status'].value_counts().index
     if plot == 'Pokemon statuses per generation':
-        st.write('A study of how in each generation the statuses of Pokemon are distributed among the eight generations')
+        st.write('A study of how the statuses of Pokemon are distributed among the eight generations')
         st.write('"Status" means Normal, Mythical, Sub Legendary and Legendary Pokemon.')
-        st.markdown("""-A Donut chart was utilized:""")
+        st.markdown("""- A Donut chart was utilized:""")
         fig, axs = plt.subplots(nrows = 4, ncols = 1, figsize = (40, 20), constrained_layout = True)
         fig.suptitle('Pokemon statuses per generation', fontsize = 18, fontweight = 'bold')
         for i, ax in zip(range(len(status_list)), axs.flat):
@@ -154,7 +154,7 @@ if st.sidebar.checkbox('Plots'):
                 ax.tick_params(axis = 'both', labelsize = 15)
                 ax.set_title(status_list[i], fontsize = 20, fontweight='bold')
             st.write(fig)
-            st.write('The Barchart is not the best choice due to the fact that the values range too differently based on the status: if the same proportion was kept for all the subplots, only the Normal one would be readable. Nonetheless, by havng the proportions change for each subplots, the plot does not truly show the wanted info.')
+            st.write('The Barchart is not the best choice due to the fact that the values range too differently based on the status: if the same proportion was kept for all the subplots, only the Normal one would be readable. Nonetheless, by having the proportions change for each subplots, the plot does not truly show the wanted info.')
 
             st.markdown("""- A Heatmap could otherwise be used:""")
             special_mask = pokemon_df[pokemon_df['status'] != 'Normal']
@@ -164,7 +164,7 @@ if st.sidebar.checkbox('Plots'):
             plt.xlabel('Status', fontsize = 12)
             plt.ylabel('Generation', fontsize = 12)
             st.write(fig)
-            st.write('The Normal status was removed since it spiked the results (there are way more "normal" Pokemon than "special" ones, so by keeping them in the heatmap would have been pratically all white besides for the Normal values.')
+            st.write('The Normal status was removed since it spiked the results (there are way more "normal" Pokemon than "special" ones, so by keeping them in the heatmap would have been pratically all white besides for the Normal values).')
 
     if plot == 'Type 1 frequency':
         st.write('This Treemap shows how many times each Type 1 appears throught the dataframe:')
@@ -204,15 +204,15 @@ if st.sidebar.checkbox('Plots'):
         st.write("""- Now onto the frequency of the Types 2 wih a Treemap (as it was done for Type 1):""")
         type_2_frequency = type_2_present_mask['type_2'].value_counts()
         fig = plt.figure(figsize = (15, 10))
-        plt.title("Type 2 frequencies",  )
+        plt.title("Type 2 frequencies", fontsize = 18, fontweight = 'bold')
         squarify.plot(sizes = type_2_frequency.values, label = type_2_frequency.index, value = type_2_frequency.values,
                 alpha = 0.9, color=sb.color_palette("Paired"), pad=1)
         plt.axis('off')
         st.write(fig)
         st.write('Flying is the most frequent Type 1, followed by Psychic and Ground.')
-        st.write('The least frequent are Flying and Fairy.')
+        st.write('The least frequent are Bug and Normal.')
         
-        st.markdown("""- Finally a plot for the frequency of Types 2 in relation to its Type 1:""")
+        st.markdown("""- Finally, a plot for the frequency of Types 2 in relation to its Type 1:""")
         fig, axs = plt.subplots(nrows = 18, ncols = 1, figsize = (15, 45), constrained_layout = True)
         for i, ax in zip(range(len(type_list)), axs.flat):
             type_1 = type_2_present_mask[type_2_present_mask['type_1'] == type_list[i]]
@@ -224,20 +224,11 @@ if st.sidebar.checkbox('Plots'):
             ax.tick_params(axis = 'both', labelsize = 15)
             ax.set_title(type_list[i] + " Type 1", fontsize = 20, fontweight='bold')
         st.write(fig)
-        st.write('Each subplots show how frequent are the Types 2 for each Type 1. For example, for the Type 1 Water (the most frequent), Ground and Flying are the most recurring Types 2.')
+        st.write('Each subplots show how frequent each Type 2 is for a Type 1. For example, for the Type 1 Water (the most frequent), Ground and Flying are the most recurring Types 2.')
         st.write('Instead, the Types 1 Fairy and Flying do not present many Type 2.')
 
         if st.checkbox("Do you want to see other plots that could be used?"):
-            st.write("For these alternative plots, only the Water Type 1 was studied to make it simpler.")
-            st.markdown("""- With a Pie chart:""")
-            water_type_1 = type_2_present_mask[type_2_present_mask['type_1'] == 'Water']
-            type_1_water_frequency = water_type_1['type_2'].value_counts()
-            fig = plt.figure(figsize=(10, 8))
-            plt.pie(type_1_water_frequency.values, labels = type_1_water_frequency.index, autopct='%.2f%%', startangle=90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' })
-            plt.legend(bbox_to_anchor=(1.5, 1))
-            st.write(fig)
-
-            st.markdown("""- With a Heatmap:""")
+            st.markdown("""- Instead of a Bar chart, a Heatmap could be used:""")
             special_mask = pokemon_df[pokemon_df['type_2'] != 'None']
             status_per_gen = special_mask.groupby(['type_1', 'type_2']).size().unstack()
             fig = plt.figure(figsize = (10, 10))
@@ -246,8 +237,17 @@ if st.sidebar.checkbox('Plots'):
             plt.ylabel('Type 1')
             plt.xticks(rotation=35)
             st.write(fig)
+            st.write('There is no self-correlation because a Pokemon can not have the same type as Type 1 and Type 2.')
 
-
+            st.markdown("""- A Pie chart for Water Type 1 and its frequencies of Types 2:""")
+            water_type_1 = type_2_present_mask[type_2_present_mask['type_1'] == 'Water']
+            type_1_water_frequency = water_type_1['type_2'].value_counts()
+            fig = plt.figure(figsize=(10, 8))
+            plt.pie(type_1_water_frequency.values, labels = type_1_water_frequency.index, autopct='%.2f%%', startangle=90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' })
+            plt.legend(bbox_to_anchor=(1.5, 1))
+            st.write(fig)
+            st.write('The focus on just the Water Type is to make the plot easier to read, but it could have been done to all Types 1 and shown with subplots.')
+            
     abil_1_frequency = pokemon_df['ability_1'].value_counts()
     abil_1_mask = abil_1_frequency[abil_1_frequency.values >= 10]
     if plot == 'Ability 1 frequency':
@@ -287,7 +287,7 @@ if st.sidebar.checkbox('Plots'):
         plt.title("How many Pokemon have an Ability 2?", fontsize = 18, fontweight = 'bold')
         plt.pie(type_df_len, labels = name, autopct='%.2f%%', startangle = 90, wedgeprops = { 'linewidth' : 3, 'edgecolor' : 'white' }, colors = colors)
         st.write(fig)
-        st.write('It is almost an even split also between Pokemon who have an Ability 2 and those who do not.')
+        st.write('It is almost an even split between Pokemon who have an Ability 2 and those who do not.')
 
         st.markdown("""- The plots done for Ability 1 are now applied to Ability 2, but focusing on the Abilities 2 held by at least 10 pokemon:""")
         abil_2_present_mask = pokemon_df[pokemon_df['ability_2'] != 'None']
@@ -308,6 +308,7 @@ if st.sidebar.checkbox('Plots'):
             type_1 = abil_2_present_mask[abil_2_present_mask['ability_2'] == abil_list[i]]
             abil_2_frequency = type_1['type_1'].value_counts()
             ax.bar(abil_2_frequency.index, abil_2_frequency.values, label = abil_list[i], color = sb.color_palette("Pastel1", len(abil_2_frequency.index)))
+            ax.set_xlabel('Type 1', fontsize = 10)
             ax.set_ylim([0, 12])
             ax.set_xticks(range(5))
             ax.tick_params(axis = 'both', labelsize = 15)
@@ -330,7 +331,7 @@ if st.sidebar.checkbox('Plots'):
         plt.ylabel('Number of Pokmeon')
         st.pyplot(fig=plt) 
 
-        st.markdown("""- A histogram to show the distribution of Pokemon by their Total points, now also taking into account their Status:""")
+        st.markdown("""- A histogram to show the distribution of Pokemon by their Total points, but taking into account their Status:""")
         fig = plt.figure(figsize = (15, 15))
         for i in range(len(status_list)):
             plt.hist(pokemon_df.loc[pokemon_df['status'] == status_list[i], 'total_points'], alpha= 0.5, label= status_list[i], bins = 100)
@@ -358,7 +359,7 @@ if st.sidebar.checkbox('Plots'):
             plt.ylabel('Total points')
             st.pyplot(fig=plt) 
 
-            st.markdown("""- The same Scatter as above, but focusing on the "special" Pokemon:""")
+            st.markdown("""- The same Scatter as above, but only of the "special" Pokemon:""")
             special_mask = pokemon_df[pokemon_df['status'] != 'Normal']
             sb.lmplot(x = 'pokedex_number', y = 'total_points', data = special_mask, fit_reg = False, hue = 'status', legend = True, height=10, aspect=1)
             plt.title('Strongest not Normal Pokemon')
@@ -401,11 +402,12 @@ if st.sidebar.checkbox('Plots'):
         plt.xlabel("Pokedex number")
         plt.ylabel("Generation")
         st.pyplot(fig=plt)
+        st.write('As expected, the Pokedex number grows alongside the generations.')
         st.write('The correlation between Pokedex number and Generation is:', pokemon_df['pokedex_number'].corr(pokemon_df['generation']))
 
     if plot == 'Height and weight':
-        st.markdown("""- This Lmplot is also due to the results of the correlation Heatmap.""")
-        st.write('As it was already done, the Pokemon are split into groups based on their Status.')
+        st.markdown("""- This Lmplot is due to the results of the correlation Heatmap.""")
+        st.write('The Pokemon are split into groups based on their Status:')
         sb.lmplot(x = 'height_m', y = 'weight_kg', data=pokemon_df, fit_reg=False, hue = 'status', legend = True, height=10, aspect=1).fig.set_size_inches(10, 10)
         plt.title('Height and weight', fontsize= 18, fontweight='bold')
         plt.xlabel("Height")
@@ -465,45 +467,48 @@ if st.sidebar.checkbox('Plots'):
 
 if st.sidebar.checkbox('Models'):
     st.title("MODELS")
-    st.subheader('Prediction on which Type 1')
-    st.write('This model tries to preditc the Type 1 of a Pokemon using a Random Forest.')
-    pokemon_type = pokemon_df[['type_1','against_normal', 'against_fire', 'against_water', 'against_electric',
-        'against_grass', 'against_ice', 'against_fight', 'against_poison',
-        'against_ground', 'against_flying', 'against_psychic', 'against_bug',
-        'against_rock', 'against_ghost', 'against_dragon', 'against_dark',
-        'against_steel', 'against_fairy']].copy()
-    pokemon_type['type_1'] = pd.Categorical(pokemon_type.type_1)
-    
-    x = pokemon_type.filter(regex='against')
-    y = pokemon_type.type_1
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.5 , random_state = 42)
-    model = RandomForestClassifier(random_state= 42)
-    model.fit(x_train, y_train)
-    y_pred = model.predict(x_test)
+    st.write('Which model would you like to see?')
+    if st.checkbox('Prediction on which Type 1'):
+        st.write('This model tries to preditc the Type 1 of a Pokemon using a Random Forest.')
+        pokemon_type = pokemon_df[['type_1','against_normal', 'against_fire', 'against_water', 'against_electric',
+            'against_grass', 'against_ice', 'against_fight', 'against_poison',
+            'against_ground', 'against_flying', 'against_psychic', 'against_bug',
+            'against_rock', 'against_ghost', 'against_dragon', 'against_dark',
+            'against_steel', 'against_fairy']].copy()
+        pokemon_type['type_1'] = pd.Categorical(pokemon_type.type_1)
+        
+        x = pokemon_type.filter(regex='against')
+        y = pokemon_type.type_1
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.5 , random_state = 42)
+        model = RandomForestClassifier(random_state= 42)
+        model.fit(x_train, y_train)
+        y_pred = model.predict(x_test)
 
-    st.write('Accuracy of the model: ', accuracy_score(y_test, y_pred))
-    st.write('Classification report of the model: ')
-    st.write(classification_report(y_test, y_pred, output_dict = True))
+        st.write('Accuracy of the model: ', accuracy_score(y_test, y_pred))
+        st.write('Classification report of the model: ')
+        st.write(classification_report(y_test, y_pred, output_dict = True))
+        st.write('It is possible there is some Overfitting.')
 
-    st.subheader('Prediction on Status')    
-    st.write('This model tries to preditc the Status of a Pokemon using a Random Forest.')
-    pokemon_legendary = pokemon_df[['status', 'total_points']].copy()
-    replace_dict = {
-    'Normal': 0,
-    'Sub Legendary': 1,
-    'Legendary' : 1,
-    'Mythical': 1}
-    pokemon_legendary.status.replace(replace_dict, inplace = True)
-    st.write('The correlation between Status and Total points is', pokemon_legendary['status'].corr(pokemon_legendary['total_points']))
-    
-    x = pokemon_df.total_points
-    y = pokemon_legendary.status
-    test_size_status = st.slider('Choose the test size: ', min_value = 0.1, max_value = 0.9, step = 0.1)
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size= test_size_status, random_state = 22)
-    model = RandomForestClassifier(random_state= 42)
-    model.fit(x_train.to_numpy().reshape(-1, 1), y_train)
-    y_pred = model.predict(x_test.to_numpy().reshape(-1, 1))
-    st.write('Accuracy of the model: ', accuracy_score(y_pred, y_test))
-    st.write("Precision of the model: ", precision_score(y_test, y_pred))
-    st.write("Recall of the model:",  recall_score(y_test, y_pred))
-    st.write('It is possible there is some Overfitting')
+    if st.checkbox('Prediction on Status'): 
+        st.write('This model tries to preditc the Status of a Pokemon using a Random Forest.')
+        pokemon_legendary = pokemon_df[['status', 'total_points']].copy()
+        replace_dict = {
+        'Normal': 0,
+        'Sub Legendary': 1,
+        'Legendary' : 1,
+        'Mythical': 1}
+        pokemon_legendary.status.replace(replace_dict, inplace = True)
+        st.write('The correlation between Status and Total points is', pokemon_legendary['status'].corr(pokemon_legendary['total_points']))
+        
+        x = pokemon_df.total_points
+        y = pokemon_legendary.status
+        test_size_status = st.slider('Choose the test size: ', min_value = 0.1, max_value = 0.9, step = 0.1)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size= test_size_status, random_state = 22)
+        model = RandomForestClassifier(random_state= 42)
+        model.fit(x_train.to_numpy().reshape(-1, 1), y_train)
+        y_pred = model.predict(x_test.to_numpy().reshape(-1, 1))
+
+        st.write('Accuracy of the model: ', accuracy_score(y_pred, y_test))
+        st.write("Precision of the model: ", precision_score(y_test, y_pred))
+        st.write("Recall of the model:",  recall_score(y_test, y_pred))
+        st.write('It is possible there is some Overfitting.')
